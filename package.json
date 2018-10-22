@@ -10,7 +10,9 @@
   "dependencies": {
     "axios": "^0.18.0",
     "vue": "^2.5.16",
+    "vue-native-websocket": "^2.0.12",
     "vue-router": "^3.0.1",
+    "vue-worker": "^1.2.1",
     "vuetify": "^1.1.8",
     "vuex": "^3.0.1"
   },

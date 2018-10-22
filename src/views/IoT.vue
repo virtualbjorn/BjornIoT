@@ -1,8 +1,7 @@
 <template>
  <v-container>
-    <v-btn square color="black" outline @click="livingRoomSwitch()">Living Room Switch</v-btn>
-    <div>{{isLivingRoom}}</div>
-    <v-btn square color="black" outline @click="fetchDatabase()">Fetch Database</v-btn>
+    <v-btn square color="orange" @click="livingRoomSwitch()">Living Room Switch</v-btn>
+    <v-btn square color="blue" @click="fetchDatabase()">Fetch Database</v-btn>
     <table id="firstTable" v-if="database.length > 0">
       <thead>
         <tr>
@@ -28,35 +27,41 @@ import axios from "axios";
 export default {
   data() {
     return {
+      serverIp: '192.168.1.13',
       isLivingRoom: false,
       database: [],
       databaseModel: {
         timeStamp: "",
         pirModule: 0,
         livingRoomSwitch: 0
-      }
+      },
+      lastRowData: {}
     };
+  },
+  mounted() {
+    this.fetchDatabase()
   },
   methods: {
     livingRoomSwitch() {
       this.isLivingRoom = !this.isLivingRoom;
-      if (this.isLivingRoom) {
-        axios.get("http://192.168.43.202:8080/livingRoomSwitch/On");
+      if(this.isLivingRoom) {
+        axios.get(`http://${this.serverIp}:8080/livingRoomSwitch/On`)
       } else {
-        axios.get("http://192.168.43.202:8080/livingRoomSwitch/Off");
+        axios.get(`http://${this.serverIp}:8080/livingRoomSwitch/Off`)
       }
     },
     async fetchDatabase() {
       this.database = [];
       let response = (await axios.get(
-        "http://192.168.43.202:8080/fetchDatabase"
+        `http://${this.serverIp}:8080/fetchDatabase`
       )).data;
       response.forEach(data => {
-        this.databaseModel.timeStamp = data[0];
-        this.databaseModel.pirModule = data[1];
-        this.databaseModel.livingRoomSwitch = data[2];
-        this.database.push(this.databaseModel);
-        this.databaseModel = []
+        this.databaseModel.timeStamp = data[0]
+        this.databaseModel.pirModule = data[1]
+        this.databaseModel.livingRoomSwitch = data[2]
+        this.database.push(this.databaseModel)
+        this.lastRowData = this.databaseModel
+        this.databaseModel = {}
       });
     }
   }
